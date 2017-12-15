@@ -1,5 +1,6 @@
 import itertools
 import os
+import sys
 
 Num = []
 Res = []
@@ -8,7 +9,8 @@ Formulas = []
 verbose = 0
 
 path_registro = os.path.dirname(os.path.abspath(__file__))
-nom_registro = "formulas"
+nom_registros = ["formulas","numeros"]
+nom_fichero = "formula.py"
 argumentos = sys.argv
 
 def encontrar_num(letra):
@@ -24,9 +26,9 @@ def ayuda():
     print("")
     print("Argumentos:")
     print("-h Ayuda: Muestra este menú")
-    print("-a ([numero,palabra]) Añadir numero: Añade un numero al registro de valores de las formulas")
-    print("-c ([palabra,palabra...]) Comparar valores: Calcula incognitas de las formulas con estas palabras")
-    print("-f (formula) Añadir formula: Añade una formula para poder calcular resultados")
+    print("-a [( numero palabra )] Añadir numero: Añade un numero al registro de valores de las formulas")
+    print("-c [( palabra palabra... )] Comparar valores: Calcula incognitas de las formulas con estas palabras")
+    print("-f [formula] Añadir formula: Añade una formula para poder calcular resultados")
     print("-v Versión: Muestra la version del programa")
     print("")
     print("*El programa esta hecho para calcular formulas con incognitas.")
@@ -39,6 +41,8 @@ def main():
     global path_registro, nom_registro
     if len(argumentos) > 0:
         prox = 0
+        v = 0
+        TMP = []
         for a in argumentos:
             if a == nom_fichero:
                 if len(argumentos) == 1:
@@ -49,14 +53,16 @@ def main():
                         ayuda()
                     elif a == "-a":
                         prox = 1
-                        if len(Num) <= 0 and len(Formulas) <= 0:                                                                              
-                            archivo_registro = fichero()
+                        if len(Num) <= 0:                                                                              
+                            archivo_registro = fichero(11)
                     elif a == "-c":
                         if len(Num) <= 0 and len(Formulas) <= 0: 
-                            fichero()
+                            fichero(-1)
                         prox = 2
                     elif a == "-f":
                         prox = 3
+                        if len(Formulas) <= 0:                                                                              
+                            archivo_registro = fichero()
                     elif a == "-v":
                         print("Version 1.1")
                                           
@@ -82,51 +88,73 @@ def main():
                         print("No se ha reconocido el argumento.")
                         print("Por favor, verifique la entrada.")
                 else:
-                    if prox == 1:
-                        numer(int(a))
-                        archivo_registro.close()
-                    elif prox == 2:
-                        comparar_valores(a)
+                    if a == "(":
+                        v = 1
+                    elif a == ")":
+                        V = 0
+                        if prox == 1:
+                            numer(TMP[0],TMP[1])
+                            archivo_registro.close()
+                        elif prox == 2:
+                            comparar_valores(TMP)
+                    elif prox == 1 or prox == 2:
+                        TMP.append(a)
                     elif prox == -1:
                         if len(Num) <= 0 and len(Formulas) <= 0: 
                             fichero()
                         exec(a)
-                    
-                    prox = 0
-
+                    if v == 0:
+                        prox = 0
     else:
         ayuda()
 
 
-def fichero():
-    global path_registro, nom_registro
-    
-    printf("Funcion fichero()")
-    if os.path.exists(str(path_registro)+nom_registro):
-        printf("Archivo " + nom_registro + " encontrado en " + path_registro)
-        archivo_registro = open(str(path_registro)+nom_registro,"rb+")
-        leer_archivo(archivo_registro.read(),1)
-        archivo_registro.close()
+def fichero(ficher):
+    global path_registro, nom_registros
+    if fichero >= 0:
+        nom_registro = nom_registros[ficher]
+        printf("Funcion fichero()")
+        if os.path.exists(str(path_registro)+nom_registro):
+            printf("Archivo " + nom_registro + " encontrado en " + path_registro)
+            archivo_registro = open(str(path_registro)+nom_registro,"rb+")
+            leer_archivo(archivo_registro.read(),ficher)
+            archivo_registro.close()
+        else:
+            
+            printf("Archivo " + nom_registro + " no encontrado. Creando...")
+            archivo_registro = open(str(path_registro+nom_registro),"w").close()
+                                        
+        return archivo_registro
     else:
-         
-        printf("Archivo " + nom_registro + " no encontrado. Creando...")
-        archivo_registro = open(str(path_registro+nom_registro),"w").close()
-                                    
-    return archivo_registro
+        for a in nom_registro:
+            fichero(a)
 
 def leer_archivo(archiv,lista):
     inpt = ""
     psc = 2
+    b = -1
+    pare = 0
     for letter in str(archiv):   
         psc-=1
-        if letter != ",":
+        if letter != "," and letter != "(" and letter != ")":
             if psc < 0:      
                 inpt += letter
                 printf("Añadida letra " + str(letter))
-        else:               
-            if lista == 1 and inpt != "":
-                add_form(int(inpt))
-                inpt = ""
+        else:   
+            if letter == "(":
+                pare = 1
+            elif pare == 0 or (pare == 1 and letter == ")"):
+                if lista == 0 and inpt != "":
+                    add_form(inpt)
+                    inpt = ""
+                elif lista == 1 and inpt != "":
+                    if b != -1:
+                        numer(b, inpt)
+                        b = -1
+                    else:
+                        b = int(inpt)
+                        inpt = ""
+                pare = 0
 
 
 def add_num(num,unidades):
@@ -185,7 +213,7 @@ def result(nume, unidad):
     Res.append(add_num(nume,unidad))
 
 def numer(nume, unidad):
-    Num.append(add_num(nume,unidad))
+    Num.append(add_num(int(nume),unidad))
 
 def comparar_valores(numeroo):
     TMP = []
