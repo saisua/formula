@@ -20,12 +20,7 @@ def add_num(num,unidades):
             if unidades[a] == "/":
                 ele = -1
     if TMP != "":
-        n = 0
-        for a in Num:
-            if a == [num,TMP]:
-                n += 1
-        if n == 0:
-            TMP2.append([TMP,ele])
+        TMP2.append([TMP,ele])
         print("Anadido " + str(TMP) + "^" + str(ele))
     print("Anadido valor " + str(num) + " " + str(TMP2))
     return([num,TMP2])
@@ -117,7 +112,7 @@ def comparar_valores(numeroo):
     #Aco es separara despues
     for a in TMP2:
         if a[0][2] == len(a[1][0]) - 2:
-            print("A: " + str(a))
+            print(a)
             calcular_formula(a[1][0])
     print("")
 
@@ -179,7 +174,7 @@ def calcular_formula(formula):
         num2 = 0
         for b in TMP1:
             for g in a[0]:
-                if g == b and n1 < len(TMP1) and num1 == 0:
+                if g == b and n1 < len(TMP1) and num2 == 0:
                     n1 += 1
                     num1 = 1
                     l1.append(a[1])
@@ -348,25 +343,23 @@ def borrar_numer():
 
 #TEST    
 numer(6.67e-11,"G")
-add_form("masaLuna=F*r*r/G*M1")
+add_form("m2=F*r*r/G*M1")
 add_form("k=T*T/r*r")
 add_form("Hz=/T")
 numer(1.9e20,"F")
 numer(6e24,"M1")
 numer(3.9e8,"r")
 def test():
-    numer(49.0,"m")
+    numer(10.0,"m")
     numer(5.0,"s")
     add_form("v=m/s")
     add_form("a=v/s")
-    #comparar(6)
+    comparar(6)
     comparar_valores([Num[0],Num[1],Num[2],Num[3]])
+    test()
     comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
     comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
-test()
-#add_form("formula") para añadir una formula
-#numer(valor, letra) para añadir un numero
-#comparar_valores([[valor,[["letra",1]]],[valor2,[["letra2",1]]]...etc])
+
 for a in Num:
     print(str(a))
 print("FIN")
