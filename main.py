@@ -64,6 +64,12 @@ def numer(nume, unidad):
 
 def comparar_valores(numeroo):
     TMP = []
+    for a in numeroo:
+        TMP.append(encontrar_num(a)) 
+    comparar_valors(TMP)
+
+def comparar_valors(numeroo):
+    TMP = []
     Pos1 = 0
     comprovar()
     comprovar_f()
