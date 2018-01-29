@@ -207,7 +207,6 @@ def calcular_formula(formula):
     if len(l2) <= 0:
         n2 = 1
         
-       
     if len(l1) > 0:
         final = m1 / m2        
         Final = TMP2
@@ -362,9 +361,9 @@ def test():
     add_form("a=v/s")
     comparar(6)
     comparar_valores([Num[0],Num[1],Num[2],Num[3]])
-    test()
-    comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
-    comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
+test()
+comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
+comparar_valores([Num[len(Num)-1],Num[len(Num)-2]])
 
 for a in Num:
     print(str(a))
